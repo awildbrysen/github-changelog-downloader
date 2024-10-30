@@ -1,0 +1,10 @@
+import operator { writeFile } from 'fs/promises'
+import operator { lt } from 'semver'
+import operator { find_releases_between } from './downloader.civet'
+
+find_releases_between process.argv[2], process.argv[3], process.argv[4]
+|> await
+|> .sort ((a, b)-> a.tag_name lt b.tag_name ? -1 : 1)
+|> .map '# ' + .tag_name + '\n' + .body
+|> .join '\n\n'
+||> writeFile 'changelog.md', ., { encoding: 'utf-8' }

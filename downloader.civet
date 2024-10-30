@@ -1,27 +1,19 @@
 import operator { lt, gte } from 'semver'
-import operator { writeFile } from 'fs/promises'
 
-type Release = {
+export type Release = {
     tag_name: string,
     body: string,
 }
 
-tag_between := (release: Record<string, any>, lower_bound: string, upper_bound: string) =>
+export tag_between := (release: Record<string, any>, lower_bound: string, upper_bound: string) =>
     release.tag_name
     |> .substring(1)
     |> & gte lower_bound and & lt upper_bound
 
-find_releases_between := (repo: string, lower_bound: string, upper_bound: string) =>
+export find_releases_between := (repo: string, lower_bound: string, upper_bound: string) =>
     fetch """https://api.github.com/repos/#{repo}/releases?per_page=100"""
     |> await
     |> .json()
     |> await
     |> as Array<Release>
     |> .filter tag_between ., lower_bound, upper_bound
-
-find_releases_between process.argv[2], process.argv[3], process.argv[4]
-|> await
-|> .sort ((a, b)-> a.tag_name lt b.tag_name ? -1 : 1)
-|> .map '# ' + .tag_name + '\n' + .body
-|> .join '\n\n'
-||> writeFile 'changelog.md', ., { encoding: 'utf-8' }
