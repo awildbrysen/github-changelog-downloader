@@ -1,0 +1,23 @@
+{
+  "name": "changelog-downloader",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "run": "civet downloader.civet",
+    "export": "civet -c downloader.civet -o .ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@danielx/civet": "^0.8.10",
+    "@types/node": "^22.8.4",
+    "@types/semver": "^7.5.8",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "semver": "^7.6.3"
+  }
+}
