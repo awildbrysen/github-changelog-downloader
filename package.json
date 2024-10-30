@@ -5,7 +5,21 @@
   "type": "module",
   "scripts": {
     "run": "civet downloader.civet",
-    "export": "civet -c downloader.civet -o .ts"
+    "export": "civet -c downloader.civet -o .ts",
+    "test": "c8 mocha **/*.test.civet"
+  },
+  "c8": {
+    "extension": [
+      ".civet"
+    ]
+  },
+  "mocha": {
+    "extension": [
+      "civet"
+    ],
+    "loader": [
+      "@danielx/civet/esm"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -13,8 +27,13 @@
   "description": "",
   "devDependencies": {
     "@danielx/civet": "^0.8.10",
+    "@types/mocha": "^10.0.9",
     "@types/node": "^22.8.4",
     "@types/semver": "^7.5.8",
+    "@types/sinon": "^17.0.3",
+    "c8": "^10.1.2",
+    "mocha": "^10.8.2",
+    "sinon": "^19.0.2",
     "typescript": "^5.6.3"
   },
   "dependencies": {

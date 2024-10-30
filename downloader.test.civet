@@ -1,0 +1,28 @@
+import operator { tag_between, find_releases_between } from './downloader.civet'
+import assert from 'assert';
+import sinon from 'sinon';
+
+describe "tag_between", ->
+    it "should return true if the tag is between the bounds", ->
+        assert.equal (tag_between { tag_name: "v1.2.3" }, "1.0.0", "2.0.0"), true
+    it "should include the lower bound", ->
+        assert.equal (tag_between { tag_name: "v1.0.0" }, "1.0.0", "2.0.0"), true
+    it "should exclude the upper bound", ->
+        assert.equal (tag_between { tag_name: "v2.0.0" }, "1.0.0", "2.0.0"), false
+
+describe "find_releases_between", ->
+    it "should return the releases between the bounds", =>
+        sinon.stub global, 'fetch'
+        ||> .returns Promise.resolve(new Response(JSON.stringify([
+            { tag_name: 'v0.1.0', body: 'Pre-release' },
+            { tag_name: 'v1.0.0', body: 'Initial release' },
+            { tag_name: 'v1.1.0', body: 'Added feature X' },
+            { tag_name: 'v1.2.0', body: 'Added feature Y' },
+            { tag_name: 'v2.0.0', body: 'Breaking changes' },
+        ]), { status: 200 }))
+
+        assert.deepStrictEqual (find_releases_between "civet", "1.0.0", "2.0.0" |> await), [
+            { tag_name: "v1.0.0", body: "Initial release" },
+            { tag_name: "v1.1.0", body: "Added feature X" },
+            { tag_name: "v1.2.0", body: "Added feature Y" },
+        ]
